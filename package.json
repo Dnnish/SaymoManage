@@ -12,6 +12,7 @@
     "db:studio": "pnpm --filter=@minidrive/db db:studio"
   },
   "devDependencies": {
+    "dotenv-cli": "^11.0.0",
     "turbo": "^2.4.4",
     "typescript": "^5.8.3"
   }
