@@ -1,8 +1,8 @@
 import { actuacionRepository } from "../repositories/actuacion-repository.js";
 
 export const actuacionService = {
-  async list(page: number, limit: number) {
-    return actuacionRepository.findAll(page, limit);
+  async list(page: number, limit: number, search?: string) {
+    return actuacionRepository.findAll(page, limit, search);
   },
 
   async getById(id: string) {

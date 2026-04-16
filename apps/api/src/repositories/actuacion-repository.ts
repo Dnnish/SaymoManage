@@ -2,28 +2,39 @@ import { db, actuaciones, users, documents } from "@minidrive/db";
 import { eq, desc, count, sql } from "drizzle-orm";
 
 export const actuacionRepository = {
-  async findAll(page: number, limit: number) {
+  async findAll(page: number, limit: number, search?: string) {
     const offset = (page - 1) * limit;
 
+    const searchFilter = search
+      ? sql`(similarity(${actuaciones.name}, ${search}) > 0.1 OR ${actuaciones.name} ILIKE ${'%' + search + '%'})`
+      : undefined;
+
+    const orderBy = search
+      ? sql`similarity(${actuaciones.name}, ${search}) DESC`
+      : desc(actuaciones.createdAt);
+
+    const baseQuery = db
+      .select({
+        id: actuaciones.id,
+        name: actuaciones.name,
+        createdById: actuaciones.createdById,
+        createdByName: users.name,
+        coliseoStatus: actuaciones.coliseoStatus,
+        createdAt: actuaciones.createdAt,
+        updatedAt: actuaciones.updatedAt,
+      })
+      .from(actuaciones)
+      .innerJoin(users, eq(actuaciones.createdById, users.id));
+
+    const countQuery = db.select({ total: count() }).from(actuaciones);
+
     const [data, totalResult] = await Promise.all([
-      db
-        .select({
-          id: actuaciones.id,
-          name: actuaciones.name,
-          createdById: actuaciones.createdById,
-          createdByName: users.name,
-          coliseoStatus: actuaciones.coliseoStatus,
-          createdAt: actuaciones.createdAt,
-          updatedAt: actuaciones.updatedAt,
-        })
-        .from(actuaciones)
-        .innerJoin(users, eq(actuaciones.createdById, users.id))
-        .orderBy(desc(actuaciones.createdAt))
-        .limit(limit)
-        .offset(offset),
-      db
-        .select({ total: count() })
-        .from(actuaciones),
+      searchFilter
+        ? baseQuery.where(searchFilter).orderBy(orderBy).limit(limit).offset(offset)
+        : baseQuery.orderBy(orderBy).limit(limit).offset(offset),
+      searchFilter
+        ? countQuery.where(searchFilter)
+        : countQuery,
     ]);
 
     return { data, total: totalResult[0]?.total ?? 0 };
