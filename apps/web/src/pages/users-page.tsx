@@ -111,6 +111,7 @@ export function UsersPage() {
           ))}
         </div>
       ) : (
+        <div className="overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -177,6 +178,7 @@ export function UsersPage() {
             ))}
           </TableBody>
         </Table>
+        </div>
       )}
 
       <Dialog

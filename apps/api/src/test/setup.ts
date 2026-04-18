@@ -1,6 +1,7 @@
 import Fastify, { type FastifyInstance } from "fastify";
 import cors from "@fastify/cors";
 import authPlugin from "../plugins/auth.js";
+import errorHandlerPlugin from "../plugins/error-handler.js";
 import authRoutes from "../routes/auth-routes.js";
 import userRoutes from "../routes/user-routes.js";
 import actuacionRoutes from "../routes/actuacion-routes.js";
@@ -14,6 +15,7 @@ export async function buildApp(): Promise<FastifyInstance> {
     credentials: true,
   });
 
+  await app.register(errorHandlerPlugin);
   await app.register(authPlugin);
   await app.register(authRoutes);
   await app.register(userRoutes);

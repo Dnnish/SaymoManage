@@ -2,6 +2,8 @@ import { lazy, Suspense } from "react";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import { AppLayout } from "@/components/layout/app-layout";
 import { ProtectedRoute } from "@/components/auth/protected-route";
+import { ErrorBoundary } from "@/components/error-boundary";
+import { NotFoundPage } from "@/pages/not-found-page";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const LoginPage = lazy(() =>
@@ -43,9 +45,11 @@ export const router = createBrowserRouter([
   {
     path: "/",
     element: (
-      <ProtectedRoute>
-        <AppLayout />
-      </ProtectedRoute>
+      <ErrorBoundary>
+        <ProtectedRoute>
+          <AppLayout />
+        </ProtectedRoute>
+      </ErrorBoundary>
     ),
     children: [
       {
@@ -86,6 +90,6 @@ export const router = createBrowserRouter([
   },
   {
     path: "*",
-    element: <Navigate to="/actuaciones" replace />,
+    element: <NotFoundPage />,
   },
 ]);
