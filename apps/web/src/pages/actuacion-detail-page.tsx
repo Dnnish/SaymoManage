@@ -17,14 +17,13 @@ import { FileUploadZone } from "@/components/documents/file-upload-zone";
 import { DocumentCard } from "@/components/documents/document-card";
 import type { Folder } from "@minidrive/shared";
 
-const FOLDERS: Folder[] = ["postes", "camaras", "fachadas", "fotos", "pets", "planos"];
+const FOLDERS: Folder[] = ["postes", "camaras", "fachadas", "fotos", "planos"];
 
 const FOLDER_LABELS: Record<Folder, string> = {
   postes: "Postes",
   camaras: "Cámaras",
   fachadas: "Fachadas",
   fotos: "Fotos",
-  pets: "PETs",
   planos: "Planos",
 };
 

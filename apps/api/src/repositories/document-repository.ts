@@ -43,7 +43,7 @@ export const documentRepository = {
       .where(
         and(
           eq(documents.actuacionId, actuacionId),
-          eq(documents.folder, folder as "postes" | "camaras" | "fachadas" | "fotos" | "pets" | "planos"),
+          eq(documents.folder, folder as "postes" | "camaras" | "fachadas" | "fotos" | "planos"),
         ),
       )
       .orderBy(desc(documents.uploadedAt));

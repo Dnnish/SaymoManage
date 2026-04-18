@@ -49,7 +49,7 @@ export function useAuth() {
       "/api/auth/sign-in/email",
       { email, password },
     );
-    await queryClient.invalidateQueries({ queryKey: ME_QUERY_KEY });
+    queryClient.setQueryData(ME_QUERY_KEY, response.user);
     return response.user;
   }
 

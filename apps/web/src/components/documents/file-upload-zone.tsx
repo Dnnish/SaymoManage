@@ -15,7 +15,6 @@ const ACCEPT_BY_FOLDER: Record<Folder, string> = {
   camaras: "application/pdf",
   fachadas: "application/pdf",
   fotos: "image/*",
-  pets: "image/*",
   planos: "application/pdf,.kmz",
 };
 
@@ -24,7 +23,6 @@ const FORMAT_LABEL_BY_FOLDER: Record<Folder, string> = {
   camaras: "Solo archivos PDF",
   fachadas: "Solo archivos PDF",
   fotos: "Imágenes (JPG, PNG, WEBP, etc.)",
-  pets: "Imágenes (se convertirán a JPG automáticamente)",
   planos: "Archivos PDF y KMZ",
 };
 

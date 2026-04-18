@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { FileText, Users, LogOut, Menu, X } from "lucide-react";
+import { FileText, Users, LogOut, Menu, X, Image } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -64,6 +64,15 @@ export function AppLayout() {
         >
           <FileText className="h-4 w-4" />
           Actuaciones
+        </NavLink>
+
+        <NavLink
+          to="/pets"
+          className={navLinkClass}
+          onClick={() => setSidebarOpen(false)}
+        >
+          <Image className="h-4 w-4" />
+          PETs
         </NavLink>
 
         {user?.role === "superadmin" && (

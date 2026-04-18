@@ -2,7 +2,6 @@ import type { Folder } from "@minidrive/shared";
 import { isValidMimeType } from "@minidrive/shared";
 import { documentRepository } from "../repositories/document-repository.js";
 import { storageService } from "./storage-service.js";
-import { imageService } from "./image-service.js";
 
 export const documentService = {
   async upload(data: {
@@ -19,13 +18,7 @@ export const documentService = {
       );
     }
 
-    let { buffer, filename, mimeType } = data;
-
-    if (data.folder === "pets" && !imageService.isJpeg(mimeType)) {
-      buffer = await imageService.convertToJpg(buffer);
-      filename = imageService.replaceExtensionWithJpg(filename);
-      mimeType = "image/jpeg";
-    }
+    const { buffer, filename, mimeType } = data;
 
     const storageKey = `${data.actuacionId}/${data.folder}/${Date.now()}-${filename}`;
 

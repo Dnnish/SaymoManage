@@ -14,12 +14,13 @@ interface ImagePreviewProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   document: Document;
+  downloadUrl?: string;
 }
 
-export function ImagePreview({ open, onOpenChange, document: doc }: ImagePreviewProps) {
+export function ImagePreview({ open, onOpenChange, document: doc, downloadUrl }: ImagePreviewProps) {
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
-  const imageUrl = `/api/documents/${doc.id}/download`;
+  const imageUrl = downloadUrl ?? `/api/documents/${doc.id}/download`;
 
   function handleDownload() {
     window.open(imageUrl, "_blank");

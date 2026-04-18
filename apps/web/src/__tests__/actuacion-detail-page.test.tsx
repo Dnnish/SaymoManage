@@ -73,7 +73,7 @@ function renderWithProviders(ui: React.ReactElement) {
 }
 
 describe("ActuacionDetailPage", () => {
-  it("renderiza las 6 carpetas con badge de conteo", () => {
+  it("renderiza las 5 carpetas con badge de conteo", () => {
     vi.mocked(useActuacion).mockReturnValue({
       data: mockActuacion,
       isLoading: false,
@@ -100,17 +100,19 @@ describe("ActuacionDetailPage", () => {
 
     renderWithProviders(<ActuacionDetailPage />);
 
-    // All 6 folder names appear
+    // All 5 folder names appear
     expect(screen.getByText("Postes")).toBeInTheDocument();
     expect(screen.getByText("Cámaras")).toBeInTheDocument();
     expect(screen.getByText("Fachadas")).toBeInTheDocument();
     expect(screen.getByText("Fotos")).toBeInTheDocument();
-    expect(screen.getByText("PETs")).toBeInTheDocument();
     expect(screen.getByText("Planos")).toBeInTheDocument();
+
+    // PETs is NOT a folder anymore
+    expect(screen.queryByText("PETs")).not.toBeInTheDocument();
 
     // Badges: postes=3, fotos=1, rest=0
     const badges = screen.getAllByText("0");
-    expect(badges.length).toBe(4); // camaras, fachadas, pets, planos
+    expect(badges.length).toBe(3); // camaras, fachadas, planos
     expect(screen.getByText("3")).toBeInTheDocument();
     expect(screen.getByText("1")).toBeInTheDocument();
   });

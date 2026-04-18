@@ -17,7 +17,7 @@ afterAll(async () => {
 
 beforeEach(async () => {
   await db.execute(
-    sql`TRUNCATE users, sessions, accounts, verifications, actuaciones, documents CASCADE`,
+    sql`TRUNCATE users, sessions, accounts, verifications, actuaciones, documents, pets CASCADE`,
   );
 });
 

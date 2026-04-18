@@ -13,14 +13,6 @@ export const ALLOWED_MIME_TYPES: Record<Folder, string[]> = {
     "image/tiff",
     "image/svg+xml",
   ],
-  [Folder.PETS]: [
-    "image/jpeg",
-    "image/png",
-    "image/webp",
-    "image/gif",
-    "image/bmp",
-    "image/tiff",
-  ],
   [Folder.PLANOS]: [
     "application/pdf",
     "application/vnd.google-earth.kmz",
@@ -28,15 +20,10 @@ export const ALLOWED_MIME_TYPES: Record<Folder, string[]> = {
 };
 
 export function isValidMimeType(folder: Folder, mimeType: string): boolean {
-  const allowed = ALLOWED_MIME_TYPES[folder];
-
   if (folder === Folder.FOTOS) {
     return mimeType.startsWith("image/");
   }
 
-  if (folder === Folder.PETS) {
-    return mimeType.startsWith("image/");
-  }
-
+  const allowed = ALLOWED_MIME_TYPES[folder];
   return allowed.includes(mimeType);
 }

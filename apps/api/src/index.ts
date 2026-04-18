@@ -6,6 +6,7 @@ import authRoutes from "./routes/auth-routes.js";
 import userRoutes from "./routes/user-routes.js";
 import actuacionRoutes from "./routes/actuacion-routes.js";
 import documentRoutes from "./routes/document-routes.js";
+import petRoutes from "./routes/pet-routes.js";
 import { ensureBucket } from "./lib/s3-client.js";
 
 const app = Fastify({ logger: true });
@@ -21,6 +22,7 @@ await app.register(authRoutes);
 await app.register(userRoutes);
 await app.register(actuacionRoutes);
 await app.register(documentRoutes);
+await app.register(petRoutes);
 
 app.get("/api/health", async () => {
   return { status: "ok" };

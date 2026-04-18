@@ -13,7 +13,6 @@ export const Folder = {
   CAMARAS: "camaras",
   FACHADAS: "fachadas",
   FOTOS: "fotos",
-  PETS: "pets",
   PLANOS: "planos",
 } as const;
 
@@ -24,6 +23,5 @@ export const FOLDERS = [
   Folder.CAMARAS,
   Folder.FACHADAS,
   Folder.FOTOS,
-  Folder.PETS,
   Folder.PLANOS,
 ] as const;

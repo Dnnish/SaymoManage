@@ -19,6 +19,9 @@ const ActuacionDetailPage = lazy(() =>
     default: m.ActuacionDetailPage,
   })),
 );
+const PetsPage = lazy(() =>
+  import("@/pages/pets-page").then((m) => ({ default: m.PetsPage })),
+);
 const UsersPage = lazy(() =>
   import("@/pages/users-page").then((m) => ({ default: m.UsersPage })),
 );
@@ -73,6 +76,14 @@ export const router = createBrowserRouter([
         element: (
           <Suspense fallback={<PageLoader />}>
             <ActuacionDetailPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "pets",
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <PetsPage />
           </Suspense>
         ),
       },

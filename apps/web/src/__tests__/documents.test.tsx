@@ -67,13 +67,13 @@ describe("FileUploadZone", () => {
     ).toBeInTheDocument();
   });
 
-  it("carpeta PETs muestra el aviso de conversion automatica a JPG", () => {
+  it("carpeta planos muestra el aviso de PDF y KMZ", () => {
     renderWithProviders(
-      <FileUploadZone actuacionId="act-1" folder="pets" />,
+      <FileUploadZone actuacionId="act-1" folder="planos" />,
     );
 
     expect(
-      screen.getByText("Imágenes (se convertirán a JPG automáticamente)"),
+      screen.getByText("Archivos PDF y KMZ"),
     ).toBeInTheDocument();
   });
 
