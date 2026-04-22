@@ -398,9 +398,14 @@ export function ActuacionDetailPage() {
             variant="outline"
             size="sm"
             className="gap-2"
-            onClick={() =>
-              window.open(`/api/actuaciones/${actuacion.id}/download`, "_blank")
-            }
+            onClick={() => {
+              const totalDocs = Object.values(actuacion.folderCounts).reduce((a, b) => a + b, 0);
+              if (totalDocs === 0) {
+                toast.error("No hay documentos para descargar");
+                return;
+              }
+              window.open(`/api/actuaciones/${actuacion.id}/download`, "_blank");
+            }}
           >
             <Download className="h-4 w-4" />
             <span className="hidden sm:inline">Descargar todo</span>
