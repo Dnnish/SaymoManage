@@ -4,6 +4,7 @@ import type { Folder } from "@minidrive/shared";
 import {
   documentService,
   InvalidMimeTypeError,
+  ForbiddenError,
 } from "../services/document-service.js";
 
 export const documentHandler = {
@@ -97,11 +98,18 @@ export const documentHandler = {
     request: FastifyRequest<{ Params: { id: string } }>,
     reply: FastifyReply,
   ) {
-    const document = await documentService.remove(request.params.id);
-    if (!document) {
-      return reply.code(404).send({ error: "Documento no encontrado" });
+    try {
+      const document = await documentService.remove(request.params.id, request.user);
+      if (!document) {
+        return reply.code(404).send({ error: "Documento no encontrado" });
+      }
+      return reply.send(document);
+    } catch (err) {
+      if (err instanceof ForbiddenError) {
+        return reply.code(403).send({ error: err.message });
+      }
+      throw err;
     }
-    return reply.send(document);
   },
 
   async downloadActuacion(request: FastifyRequest, reply: FastifyReply) {

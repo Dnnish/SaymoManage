@@ -69,6 +69,11 @@ export const userService = {
     }
 
     const updated = await userRepository.updateById(id, updateData);
+
+    if (input.role && input.role !== user.role) {
+      await db.delete(sessions).where(eq(sessions.userId, id));
+    }
+
     return updated ? sanitizeUser(updated) : null;
   },
 

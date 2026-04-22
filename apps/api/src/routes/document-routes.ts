@@ -41,18 +41,8 @@ const documentRoutes: FastifyPluginAsync = async (app) => {
   // Download single document
   app.get("/api/documents/:id/download", documentHandler.download);
 
-  // Delete document (superadmin and admin only)
-  app.delete(
-    "/api/documents/:id",
-    {
-      preHandler: async (request, reply) => {
-        if (!["superadmin", "admin"].includes(request.user.role)) {
-          return reply.code(403).send({ error: "No tienes permisos para esta accion" });
-        }
-      },
-    },
-    documentHandler.remove,
-  );
+  // Delete document (admin/superadmin always; user only within 30 min of own upload)
+  app.delete("/api/documents/:id", documentHandler.remove);
 };
 
 export default documentRoutes;

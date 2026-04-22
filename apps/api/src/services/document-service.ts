@@ -106,9 +106,20 @@ export const documentService = {
     return docs;
   },
 
-  async remove(id: string) {
+  async remove(id: string, requester: { id: string; role: string }) {
     const document = await documentRepository.findById(id);
     if (!document) return null;
+
+    if (requester.role === "user") {
+      if (document.uploadedById !== requester.id) {
+        throw new ForbiddenError("Solo puedes eliminar archivos que hayas subido tú");
+      }
+      const uploadedAt = new Date(document.uploadedAt).getTime();
+      const elapsed = Date.now() - uploadedAt;
+      if (elapsed > 30 * 60 * 1000) {
+        throw new ForbiddenError("Solo puedes eliminar archivos dentro de los primeros 30 minutos tras subirlos");
+      }
+    }
 
     await storageService.remove(document.storageKey);
     await documentRepository.deleteById(id);
@@ -125,5 +136,12 @@ export class InvalidMimeTypeError extends Error {
   constructor(message: string) {
     super(message);
     this.name = "InvalidMimeTypeError";
+  }
+}
+
+export class ForbiddenError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "ForbiddenError";
   }
 }
