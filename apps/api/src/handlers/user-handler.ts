@@ -1,6 +1,6 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
 import { createUserSchema, updateUserSchema } from "@minidrive/shared";
-import { userService, ConflictError, SelfDeleteError } from "../services/user-service.js";
+import { userService, ConflictError, SelfDeleteError, ForbiddenDeleteError } from "../services/user-service.js";
 
 export const userHandler = {
   async list(
@@ -74,10 +74,21 @@ export const userHandler = {
       }
       return reply.send(user);
     } catch (err) {
-      if (err instanceof SelfDeleteError) {
+      if (err instanceof SelfDeleteError || err instanceof ForbiddenDeleteError) {
         return reply.code(400).send({ error: err.message });
       }
       throw err;
     }
+  },
+
+  async restore(
+    request: FastifyRequest<{ Params: { id: string } }>,
+    reply: FastifyReply,
+  ) {
+    const user = await userService.restore(request.params.id);
+    if (!user) {
+      return reply.code(404).send({ error: "Usuario no encontrado" });
+    }
+    return reply.send(user);
   },
 };

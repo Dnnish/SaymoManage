@@ -16,7 +16,7 @@ const USERS_QUERY_KEY = ["users"] as const;
 export function useUsers() {
   return useQuery<User[]>({
     queryKey: USERS_QUERY_KEY,
-    queryFn: () => apiClient.get<User[]>("/api/users"),
+    queryFn: () => apiClient.get<User[]>("/api/users?includeDeleted=true"),
     refetchOnMount: "always",
   });
 }
@@ -50,6 +50,17 @@ export function useDeleteUser() {
 
   return useMutation({
     mutationFn: (id: string) => apiClient.delete<void>(`/api/users/${id}`),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: USERS_QUERY_KEY });
+    },
+  });
+}
+
+export function useRestoreUser() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => apiClient.patch<User>(`/api/users/${id}/restore`),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: USERS_QUERY_KEY });
     },

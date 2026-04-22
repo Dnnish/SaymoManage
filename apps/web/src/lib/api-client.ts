@@ -23,8 +23,9 @@ async function request<T>(
   if (!response.ok) {
     let message = response.statusText;
     try {
-      const data = (await response.json()) as { message?: string };
+      const data = (await response.json()) as { message?: string; error?: string };
       if (data.message) message = data.message;
+      else if (data.error) message = data.error;
     } catch {
       // ignore parse errors — keep statusText as message
     }

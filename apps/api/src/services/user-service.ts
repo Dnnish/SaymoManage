@@ -73,14 +73,33 @@ export const userService = {
     const user = await userRepository.findById(id);
     if (!user) return null;
 
+    if (user.role === "superadmin") {
+      throw new ForbiddenDeleteError("No se puede eliminar a un superadmin");
+    }
+
     const deleted = await userRepository.softDelete(id);
     return deleted ? sanitizeUser(deleted) : null;
+  },
+
+  async restore(id: string) {
+    const user = await userRepository.findById(id);
+    if (!user) return null;
+
+    const restored = await userRepository.restore(id);
+    return restored ? sanitizeUser(restored) : null;
   },
 };
 
 function sanitizeUser(user: Record<string, unknown>) {
   const { deletedAt, ...rest } = user as Record<string, unknown>;
   return { ...rest, deletedAt };
+}
+
+export class ForbiddenDeleteError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "ForbiddenDeleteError";
+  }
 }
 
 export class ConflictError extends Error {

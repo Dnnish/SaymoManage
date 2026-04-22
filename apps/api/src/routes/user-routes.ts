@@ -9,6 +9,7 @@ const userRoutes: FastifyPluginAsync = async (app) => {
   app.get("/api/users/:id", userHandler.getById);
   app.post("/api/users", userHandler.create);
   app.patch("/api/users/:id", userHandler.update);
+  app.patch("/api/users/:id/restore", userHandler.restore);
   app.delete("/api/users/:id", userHandler.remove);
 };
 

@@ -45,4 +45,13 @@ export const userRepository = {
       .returning();
     return result[0] ?? null;
   },
+
+  async restore(id: string) {
+    const result = await db
+      .update(users)
+      .set({ deletedAt: sql`NULL`, updatedAt: new Date() })
+      .where(eq(users.id, id))
+      .returning();
+    return result[0] ?? null;
+  },
 };

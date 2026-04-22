@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { toast } from "sonner";
+import { Plus, Pencil, Trash2, RotateCcw } from "lucide-react";
 import {
   useUsers,
   useCreateUser,
   useUpdateUser,
+  useRestoreUser,
   type User,
 } from "@/hooks/use-users";
 import type { CreateUserInput, UpdateUserInput } from "@minidrive/shared";
@@ -68,6 +70,7 @@ export function UsersPage() {
   const { data: users, isLoading } = useUsers();
   const createUser = useCreateUser();
   const updateUser = useUpdateUser();
+  const restoreUser = useRestoreUser();
 
   const [dialogState, setDialogState] = useState<DialogState>({
     type: "closed",
@@ -76,15 +79,23 @@ export function UsersPage() {
   const [deleteOpen, setDeleteOpen] = useState(false);
 
   async function handleCreate(values: CreateUserInput) {
-    await createUser.mutateAsync(values);
-    setDialogState({ type: "closed" });
+    try {
+      await createUser.mutateAsync(values);
+      setDialogState({ type: "closed" });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Error al crear usuario");
+    }
   }
 
   async function handleEdit(values: EditUserInput) {
     if (dialogState.type !== "edit") return;
     const { id } = dialogState.user;
-    await updateUser.mutateAsync({ id, ...values });
-    setDialogState({ type: "closed" });
+    try {
+      await updateUser.mutateAsync({ id, ...values });
+      setDialogState({ type: "closed" });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Error al editar usuario");
+    }
   }
 
   function openDeleteDialog(user: User) {
@@ -154,24 +165,41 @@ export function UsersPage() {
                 </TableCell>
                 <TableCell>
                   <div className="flex gap-1">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      aria-label={`Editar ${user.name}`}
-                      onClick={() =>
-                        setDialogState({ type: "edit", user })
-                      }
-                    >
-                      <Pencil />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      aria-label={`Eliminar ${user.name}`}
-                      onClick={() => openDeleteDialog(user)}
-                    >
-                      <Trash2 />
-                    </Button>
+                    {!user.deletedAt && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        aria-label={`Editar ${user.name}`}
+                        onClick={() => setDialogState({ type: "edit", user })}
+                      >
+                        <Pencil />
+                      </Button>
+                    )}
+                    {user.deletedAt ? (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        aria-label={`Restaurar ${user.name}`}
+                        disabled={restoreUser.isPending}
+                        onClick={() =>
+                          restoreUser.mutate(user.id, {
+                            onSuccess: () => toast.success(`${user.name} restaurado`),
+                            onError: (err) => toast.error(err instanceof Error ? err.message : "Error al restaurar"),
+                          })
+                        }
+                      >
+                        <RotateCcw />
+                      </Button>
+                    ) : user.role !== "superadmin" && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        aria-label={`Eliminar ${user.name}`}
+                        onClick={() => openDeleteDialog(user)}
+                      >
+                        <Trash2 />
+                      </Button>
+                    )}
                   </div>
                 </TableCell>
               </TableRow>
