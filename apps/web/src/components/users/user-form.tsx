@@ -16,7 +16,7 @@ import {
 
 // Edit mode schema: same as updateUserSchema but name and code are required
 const editUserSchema = updateUserSchema.extend({
-  name: z.string().min(1, "El nombre es requerido").max(255),
+  name: z.string().min(1, "El nombre es requerido").max(20, "El nombre no puede superar 20 caracteres"),
   code: z.string().regex(/^\d{7,15}$/, "El código debe tener entre 7 y 15 dígitos"),
 });
 
@@ -78,6 +78,7 @@ export function UserForm(props: UserFormProps) {
           <Input
             id="name"
             placeholder="Nombre completo"
+            maxLength={20}
             {...register("name")}
           />
           {errors.name && (
@@ -171,6 +172,7 @@ export function UserForm(props: UserFormProps) {
         <Input
           id="name"
           placeholder="Nombre completo"
+          maxLength={20}
           {...register("name")}
         />
         {errors.name && (

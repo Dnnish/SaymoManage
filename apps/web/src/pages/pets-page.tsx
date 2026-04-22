@@ -619,6 +619,7 @@ function FolderDetail({
                     }
                   }}
                   className="h-9 text-lg font-bold"
+                  maxLength={50}
                   autoFocus
                   disabled={renameFolder.isPending}
                 />
@@ -962,6 +963,7 @@ function FolderCard({
                   }
                 }}
                 className="h-7 text-sm"
+                maxLength={50}
                 autoFocus
                 disabled={renameFolder.isPending}
               />

@@ -36,6 +36,9 @@ export const petFolderHandler = {
     if (!name || typeof name !== "string" || name.trim().length === 0) {
       return reply.code(400).send({ error: "El nombre es requerido" });
     }
+    if (name.trim().length > 50) {
+      return reply.code(400).send({ error: "El nombre no puede superar 50 caracteres" });
+    }
 
     const folder = await petFolderService.rename(folderId, name.trim());
     if (!folder) {

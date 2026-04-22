@@ -9,7 +9,7 @@ export const createUserSchema = z.object({
     .min(1, "El código es requerido")
     .regex(/^\d{7,15}$/, "El código debe tener entre 7 y 15 dígitos numéricos"),
   password: z.string().min(8, "La password debe tener al menos 8 caracteres"),
-  name: z.string().min(1, "El nombre es requerido").max(255),
+  name: z.string().min(1, "El nombre es requerido").max(20, "El nombre no puede superar 20 caracteres"),
   role: z.enum(ROLES).default("user"),
 });
 
@@ -18,14 +18,14 @@ export const updateUserSchema = z.object({
     .string()
     .regex(/^\d{7,15}$/, "El código debe tener entre 7 y 15 dígitos numéricos")
     .optional(),
-  name: z.string().min(1).max(255).optional(),
+  name: z.string().min(1).max(20, "El nombre no puede superar 20 caracteres").optional(),
   role: z.enum(ROLES).optional(),
 });
 
 // --- Actuacion schemas ---
 
 export const createActuacionSchema = z.object({
-  name: z.string().min(1, "El nombre es requerido").max(500),
+  name: z.string().min(1, "El nombre es requerido").max(50, "El nombre no puede superar 50 caracteres"),
 });
 
 // --- Document schemas ---

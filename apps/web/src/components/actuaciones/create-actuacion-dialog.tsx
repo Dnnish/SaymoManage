@@ -60,6 +60,7 @@ export function CreateActuacionDialog({
             <Input
               id="name"
               placeholder="Nombre de la actuación"
+              maxLength={50}
               {...register("name")}
             />
             {errors.name && (

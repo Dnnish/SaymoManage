@@ -349,6 +349,7 @@ export function ActuacionDetailPage() {
                   if (e.key === "Escape") setIsEditingName(false);
                 }}
                 className="h-9 text-lg font-bold"
+                maxLength={50}
                 autoFocus
                 disabled={renameActuacion.isPending}
               />
