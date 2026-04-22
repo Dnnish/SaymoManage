@@ -39,13 +39,12 @@ export const petFolderService = {
     const folder = await petFolderRepository.findById(id);
     if (!folder) return null;
 
-    // Delete all pets in the folder from S3 first
     const petsInFolder = await petRepository.findAllByFolderId(id);
-    await Promise.all(
+
+    await Promise.allSettled(
       petsInFolder.map((pet) => storageService.remove(pet.storageKey)),
     );
 
-    // Delete DB records: pets first (FK constraint), then folder
     await petRepository.deleteByFolderId(id);
     await petFolderRepository.deleteById(id);
     return folder;
