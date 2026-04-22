@@ -29,7 +29,7 @@ import {
 import { UserForm } from "@/components/users/user-form";
 import { DeleteUserDialog } from "@/components/users/delete-user-dialog";
 import { z } from "zod";
-import { updateUserSchema, emailToCode } from "@minidrive/shared";
+import { updateUserSchema, emailToCode, PROTECTED_ADMIN_CODE } from "@minidrive/shared";
 import { cn } from "@/lib/utils";
 
 const editUserSchema = updateUserSchema.extend({
@@ -165,7 +165,7 @@ export function UsersPage() {
                 </TableCell>
                 <TableCell>
                   <div className="flex gap-1">
-                    {!user.deletedAt && (
+                    {!user.deletedAt && emailToCode(user.email) !== PROTECTED_ADMIN_CODE && (
                       <Button
                         variant="ghost"
                         size="icon"
@@ -190,7 +190,7 @@ export function UsersPage() {
                       >
                         <RotateCcw />
                       </Button>
-                    ) : user.role !== "superadmin" && (
+                    ) : user.role !== "superadmin" && emailToCode(user.email) !== PROTECTED_ADMIN_CODE && (
                       <Button
                         variant="ghost"
                         size="icon"

@@ -1,5 +1,5 @@
 import type { CreateUserInput, UpdateUserInput } from "@minidrive/shared";
-import { codeToEmail } from "@minidrive/shared";
+import { codeToEmail, PROTECTED_ADMIN_EMAIL } from "@minidrive/shared";
 import { db, sessions } from "@minidrive/db";
 import { eq } from "drizzle-orm";
 import { userRepository } from "../repositories/user-repository.js";
@@ -48,6 +48,10 @@ export const userService = {
     const user = await userRepository.findById(id);
     if (!user) return null;
 
+    if (user.email === PROTECTED_ADMIN_EMAIL) {
+      throw new ProtectedAccountError("Esta cuenta es fija y no puede modificarse");
+    }
+
     const updateData: Record<string, unknown> = {};
     if (input.name) updateData.name = input.name;
     if (input.role) updateData.role = input.role;
@@ -75,6 +79,10 @@ export const userService = {
     const user = await userRepository.findById(id);
     if (!user) return null;
 
+    if (user.email === PROTECTED_ADMIN_EMAIL) {
+      throw new ProtectedAccountError("Esta cuenta es fija y no puede eliminarse");
+    }
+
     if (user.role === "superadmin") {
       throw new ForbiddenDeleteError("No se puede eliminar a un superadmin");
     }
@@ -98,6 +106,13 @@ export const userService = {
 function sanitizeUser(user: Record<string, unknown>) {
   const { deletedAt, ...rest } = user as Record<string, unknown>;
   return { ...rest, deletedAt };
+}
+
+export class ProtectedAccountError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "ProtectedAccountError";
+  }
 }
 
 export class ForbiddenDeleteError extends Error {

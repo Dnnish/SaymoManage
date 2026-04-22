@@ -1,6 +1,6 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
 import { createUserSchema, updateUserSchema } from "@minidrive/shared";
-import { userService, ConflictError, SelfDeleteError, ForbiddenDeleteError } from "../services/user-service.js";
+import { userService, ConflictError, SelfDeleteError, ForbiddenDeleteError, ProtectedAccountError } from "../services/user-service.js";
 
 export const userHandler = {
   async list(
@@ -59,6 +59,9 @@ export const userHandler = {
       if (err instanceof ConflictError) {
         return reply.code(409).send({ error: err.message });
       }
+      if (err instanceof ProtectedAccountError) {
+        return reply.code(403).send({ error: err.message });
+      }
       throw err;
     }
   },
@@ -74,7 +77,7 @@ export const userHandler = {
       }
       return reply.send(user);
     } catch (err) {
-      if (err instanceof SelfDeleteError || err instanceof ForbiddenDeleteError) {
+      if (err instanceof SelfDeleteError || err instanceof ForbiddenDeleteError || err instanceof ProtectedAccountError) {
         return reply.code(400).send({ error: err.message });
       }
       throw err;

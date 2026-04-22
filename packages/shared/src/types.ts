@@ -31,6 +31,10 @@ export const FOLDERS = [
 // Auth code helpers — code is stored as `{code}@minidrive.com` in Better Auth
 export const AUTH_EMAIL_SUFFIX = "@minidrive.com";
 
+// Protected system account — cannot be edited or deleted
+export const PROTECTED_ADMIN_CODE = "0000000000";
+export const PROTECTED_ADMIN_EMAIL = `${PROTECTED_ADMIN_CODE}${AUTH_EMAIL_SUFFIX}`;
+
 export function codeToEmail(code: string): string {
   return `${code}${AUTH_EMAIL_SUFFIX}`;
 }
