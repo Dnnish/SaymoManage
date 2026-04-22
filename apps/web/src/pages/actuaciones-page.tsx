@@ -188,7 +188,7 @@ function ActuacionCard({ actuacion, canRename, canDelete, onClick, onDelete }: A
               <CardTitle className="truncate text-base">{actuacion.name}</CardTitle>
             )}
           </div>
-          <div className="flex shrink-0 items-center gap-1">
+          <div className="hidden sm:flex shrink-0 items-center gap-1">
             {!isEditing && canRename && (
               <Button
                 variant="ghost"
@@ -217,11 +217,39 @@ function ActuacionCard({ actuacion, canRename, canDelete, onClick, onDelete }: A
         </div>
       </CardHeader>
       <CardContent>
-        <div className="flex gap-4 text-sm text-muted-foreground">
-          <span>Creado por: {actuacion.createdByName}</span>
-          <span>
-            {new Date(actuacion.createdAt).toLocaleDateString("es-ES")}
-          </span>
+        <div className="flex items-center justify-between gap-2 text-sm text-muted-foreground">
+          <div className="flex gap-4">
+            <span>Creado por: {actuacion.createdByName}</span>
+            <span>
+              {new Date(actuacion.createdAt).toLocaleDateString("es-ES")}
+            </span>
+          </div>
+          <div className="flex sm:hidden shrink-0 items-center gap-1" onClick={(e) => e.stopPropagation()}>
+            {!isEditing && canRename && (
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label={`Renombrar ${actuacion.name}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setEditName(actuacion.name);
+                  setIsEditing(true);
+                }}
+              >
+                <Pencil className="h-4 w-4" />
+              </Button>
+            )}
+            {canDelete && (
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label={`Eliminar ${actuacion.name}`}
+                onClick={(e) => { e.stopPropagation(); onDelete(e); }}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
         </div>
       </CardContent>
     </Card>
