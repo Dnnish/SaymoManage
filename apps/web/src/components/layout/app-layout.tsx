@@ -47,7 +47,7 @@ export function AppLayout() {
     <div className="flex h-full flex-col">
       <div className="flex h-14 items-center border-b border-sidebar-border px-4">
         <span className="text-lg font-bold text-sidebar-foreground">
-          MiniDrive
+          SaymoManage
         </span>
         <button
           className="ml-auto lg:hidden text-sidebar-foreground"
@@ -182,7 +182,7 @@ export function AppLayout() {
           >
             <Menu className="h-5 w-5" />
           </Button>
-          <span className="ml-3 text-lg font-bold">MiniDrive</span>
+          <span className="ml-3 text-lg font-bold">SaymoManage</span>
         </header>
 
         <main className="flex-1 overflow-auto p-6">
