@@ -136,7 +136,7 @@ function ActuacionCard({ actuacion, canRename, canDelete, onClick, onDelete }: A
 
   return (
     <Card
-      className="cursor-pointer transition-colors hover:bg-accent"
+      className="cursor-pointer overflow-hidden transition-colors hover:bg-accent"
       onClick={() => !isEditing && onClick()}
     >
       <CardHeader className="pb-2">
