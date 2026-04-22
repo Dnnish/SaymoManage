@@ -17,7 +17,7 @@ import type { Document } from "@/hooks/use-documents";
 
 interface DocumentCardProps {
   document: Document;
-  canDelete: boolean;
+  canDelete: (doc: Document) => boolean;
   selected?: boolean;
   onToggleSelect?: (id: string) => void;
 }
@@ -161,7 +161,7 @@ export function DocumentCard({ document: doc, canDelete, selected, onToggleSelec
             <Download className="h-4 w-4" />
           </Button>
 
-          {canDelete && (
+          {canDelete(doc) && (
             <Button
               variant="ghost"
               size="sm"
