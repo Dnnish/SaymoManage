@@ -1,6 +1,6 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
 import { createUserSchema, updateUserSchema } from "@minidrive/shared";
-import { userService, ConflictError, SelfDeleteError, ForbiddenDeleteError, ProtectedAccountError } from "../services/user-service.js";
+import { userService, ConflictError, SelfDeleteError, ForbiddenDeleteError, ProtectedAccountError, InvalidPasswordError } from "../services/user-service.js";
 
 export const userHandler = {
   async list(
@@ -78,6 +78,37 @@ export const userHandler = {
       return reply.send(user);
     } catch (err) {
       if (err instanceof SelfDeleteError || err instanceof ForbiddenDeleteError || err instanceof ProtectedAccountError) {
+        return reply.code(400).send({ error: err.message });
+      }
+      throw err;
+    }
+  },
+
+  async resetPassword(
+    request: FastifyRequest<{ Params: { id: string } }>,
+    reply: FastifyReply,
+  ) {
+    const result = await userService.resetPassword(request.params.id);
+    if (!result) return reply.code(404).send({ error: "Usuario no encontrado" });
+    return reply.send(result);
+  },
+
+  async changePassword(
+    request: FastifyRequest,
+    reply: FastifyReply,
+  ) {
+    const { currentPassword, newPassword } = request.body as { currentPassword: string; newPassword: string };
+    if (!currentPassword || !newPassword) {
+      return reply.code(400).send({ error: "Se requieren contraseña actual y nueva" });
+    }
+    if (newPassword.length < 8) {
+      return reply.code(400).send({ error: "La nueva contraseña debe tener al menos 8 caracteres" });
+    }
+    try {
+      await userService.changePassword(request.user.id, currentPassword, newPassword);
+      return reply.send({ ok: true });
+    } catch (err) {
+      if (err instanceof InvalidPasswordError) {
         return reply.code(400).send({ error: err.message });
       }
       throw err;

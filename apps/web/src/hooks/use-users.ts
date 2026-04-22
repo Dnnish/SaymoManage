@@ -56,6 +56,19 @@ export function useDeleteUser() {
   });
 }
 
+export function useResetPassword() {
+  return useMutation({
+    mutationFn: (id: string) => apiClient.post<{ password: string }>(`/api/users/${id}/reset-password`),
+  });
+}
+
+export function useChangePassword() {
+  return useMutation({
+    mutationFn: ({ currentPassword, newPassword }: { currentPassword: string; newPassword: string }) =>
+      apiClient.post<{ ok: boolean }>("/api/users/me/change-password", { currentPassword, newPassword }),
+  });
+}
+
 export function useRestoreUser() {
   const queryClient = useQueryClient();
 

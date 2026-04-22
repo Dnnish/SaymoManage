@@ -10,6 +10,8 @@ const userRoutes: FastifyPluginAsync = async (app) => {
   app.post("/api/users", userHandler.create);
   app.patch("/api/users/:id", userHandler.update);
   app.patch("/api/users/:id/restore", userHandler.restore);
+  app.post("/api/users/:id/reset-password", userHandler.resetPassword);
+  app.post("/api/users/me/change-password", userHandler.changePassword);
   app.delete("/api/users/:id", userHandler.remove);
 };
 

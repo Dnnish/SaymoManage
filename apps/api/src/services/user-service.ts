@@ -1,7 +1,8 @@
 import type { CreateUserInput, UpdateUserInput } from "@minidrive/shared";
 import { codeToEmail, PROTECTED_ADMIN_EMAIL } from "@minidrive/shared";
-import { db, sessions } from "@minidrive/db";
+import { db, sessions, accounts } from "@minidrive/db";
 import { eq } from "drizzle-orm";
+import { hashPassword } from "better-auth/crypto";
 import { userRepository } from "../repositories/user-repository.js";
 import { auth } from "../lib/auth.js";
 
@@ -94,6 +95,41 @@ export const userService = {
     return deleted ? sanitizeUser(deleted) : null;
   },
 
+  async resetPassword(id: string) {
+    const user = await userRepository.findById(id);
+    if (!user) return null;
+
+    const newPassword = generatePassword();
+    const hashed = await hashPassword(newPassword);
+
+    await db
+      .update(accounts)
+      .set({ password: hashed, updatedAt: new Date() })
+      .where(eq(accounts.userId, id));
+
+    return { password: newPassword };
+  },
+
+  async changePassword(id: string, currentPassword: string, newPassword: string) {
+    const account = await db
+      .select()
+      .from(accounts)
+      .where(eq(accounts.userId, id))
+      .then((r) => r[0]);
+
+    if (!account?.password) throw new InvalidPasswordError("No se encontró la cuenta");
+
+    const { verifyPassword } = await import("better-auth/crypto");
+    const valid = await verifyPassword({ hash: account.password, password: currentPassword });
+    if (!valid) throw new InvalidPasswordError("La contraseña actual es incorrecta");
+
+    const hashed = await hashPassword(newPassword);
+    await db
+      .update(accounts)
+      .set({ password: hashed, updatedAt: new Date() })
+      .where(eq(accounts.userId, id));
+  },
+
   async restore(id: string) {
     const user = await userRepository.findById(id);
     if (!user) return null;
@@ -106,6 +142,18 @@ export const userService = {
 function sanitizeUser(user: Record<string, unknown>) {
   const { deletedAt, ...rest } = user as Record<string, unknown>;
   return { ...rest, deletedAt };
+}
+
+function generatePassword(): string {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$";
+  return Array.from({ length: 12 }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
+}
+
+export class InvalidPasswordError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "InvalidPasswordError";
+  }
 }
 
 export class ProtectedAccountError extends Error {

@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, RotateCcw } from "lucide-react";
+import { Plus, Pencil, Trash2, RotateCcw, KeyRound, Copy, Check } from "lucide-react";
 import {
   useUsers,
   useCreateUser,
   useUpdateUser,
   useRestoreUser,
+  useResetPassword,
   type User,
 } from "@/hooks/use-users";
 import type { CreateUserInput, UpdateUserInput } from "@minidrive/shared";
@@ -23,9 +24,11 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { UserForm } from "@/components/users/user-form";
 import { DeleteUserDialog } from "@/components/users/delete-user-dialog";
 import { z } from "zod";
@@ -71,6 +74,9 @@ export function UsersPage() {
   const createUser = useCreateUser();
   const updateUser = useUpdateUser();
   const restoreUser = useRestoreUser();
+  const resetPassword = useResetPassword();
+  const [generatedPassword, setGeneratedPassword] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   const [dialogState, setDialogState] = useState<DialogState>({
     type: "closed",
@@ -175,6 +181,22 @@ export function UsersPage() {
                         <Pencil />
                       </Button>
                     )}
+                    {!user.deletedAt && emailToCode(user.email) !== PROTECTED_ADMIN_CODE && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        aria-label={`Restablecer contraseña de ${user.name}`}
+                        disabled={resetPassword.isPending}
+                        onClick={() =>
+                          resetPassword.mutate(user.id, {
+                            onSuccess: (data) => { setGeneratedPassword(data.password); setCopied(false); },
+                            onError: () => toast.error("Error al restablecer la contraseña"),
+                          })
+                        }
+                      >
+                        <KeyRound />
+                      </Button>
+                    )}
                     {user.deletedAt ? (
                       <Button
                         variant="ghost"
@@ -246,6 +268,33 @@ export function UsersPage() {
               isSubmitting={updateUser.isPending}
             />
           )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!generatedPassword} onOpenChange={(open) => { if (!open) setGeneratedPassword(null); }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Contraseña restablecida</DialogTitle>
+            <DialogDescription>
+              Copia esta contraseña y compártela con el usuario. No se volverá a mostrar.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex items-center gap-2">
+            <Input readOnly value={generatedPassword ?? ""} className="font-mono" />
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => {
+                if (!generatedPassword) return;
+                void navigator.clipboard.writeText(generatedPassword);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+              }}
+              aria-label="Copiar contraseña"
+            >
+              {copied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
 
