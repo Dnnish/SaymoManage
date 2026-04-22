@@ -44,6 +44,7 @@ export function useActuaciones(
     queryKey: [...ACTUACIONES_QUERY_KEY, { page, limit, search, sortBy, sortOrder, coliseoStatus }],
     queryFn: () =>
       apiClient.get<ActuacionesResponse>(`/api/actuaciones?${params.toString()}`),
+    refetchOnMount: "always",
   });
 }
 

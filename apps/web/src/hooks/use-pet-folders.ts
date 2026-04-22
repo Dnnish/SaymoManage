@@ -17,6 +17,7 @@ export function usePetFolders() {
   return useQuery<PetFolder[]>({
     queryKey: PET_FOLDERS_QUERY_KEY,
     queryFn: () => apiClient.get<PetFolder[]>("/api/pet-folders"),
+    refetchOnMount: "always",
   });
 }
 

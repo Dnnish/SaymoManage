@@ -17,6 +17,7 @@ export function useUsers() {
   return useQuery<User[]>({
     queryKey: USERS_QUERY_KEY,
     queryFn: () => apiClient.get<User[]>("/api/users"),
+    refetchOnMount: "always",
   });
 }
 
