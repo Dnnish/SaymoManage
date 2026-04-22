@@ -107,15 +107,16 @@ export const documentHandler = {
   async downloadActuacion(request: FastifyRequest, reply: FastifyReply) {
     const { actuacionId } = request.params as { actuacionId: string };
 
-    const stream = await documentService.downloadActuacion(actuacionId);
-    if (!stream) {
+    const result = await documentService.downloadActuacion(actuacionId);
+    if (!result) {
       return reply.code(404).send({ error: "No hay documentos en esta actuación" });
     }
 
+    const zipName = `${result.name}.zip`;
     return reply
       .header("Content-Type", "application/zip")
-      .header("Content-Disposition", `attachment; filename="actuacion.zip"`)
-      .send(stream);
+      .header("Content-Disposition", `attachment; filename="${zipName}"`)
+      .send(result.stream);
   },
 
   async bulkDownload(request: FastifyRequest, reply: FastifyReply) {

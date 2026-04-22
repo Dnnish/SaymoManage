@@ -1,6 +1,7 @@
 import type { Folder } from "@minidrive/shared";
 import { isValidMimeType } from "@minidrive/shared";
 import { documentRepository } from "../repositories/document-repository.js";
+import { actuacionRepository } from "../repositories/actuacion-repository.js";
 import { storageService } from "./storage-service.js";
 import { zipService } from "./zip-service.js";
 
@@ -66,7 +67,10 @@ export const documentService = {
   },
 
   async downloadActuacion(actuacionId: string) {
-    const docs = await documentRepository.findByActuacion(actuacionId);
+    const [actuacion, docs] = await Promise.all([
+      actuacionRepository.findById(actuacionId),
+      documentRepository.findByActuacion(actuacionId),
+    ]);
     if (docs.length === 0) return null;
 
     const entries = docs.map((doc) => ({
@@ -74,7 +78,10 @@ export const documentService = {
       storageKey: doc.storageKey,
     }));
 
-    return zipService.createZipStream(entries);
+    return {
+      name: actuacion?.name ?? "actuacion",
+      stream: zipService.createZipStream(entries),
+    };
   },
 
   async bulkDownload(ids: string[]) {
